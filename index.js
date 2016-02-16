@@ -30,12 +30,8 @@ io.on('connection', function(socket){
                 clInstance.grab(function(err, image){
                     if(!err){
                         fs.writeFile('./stream/image.jpg', image, 'binary', function(){
-                            mqttClient = mqtt.connect('mqtt://iotexpo.reekoh.com:19001', {clientId: 'raspi1'});
-                            mqttClient.on('connect', function(){
-                                mqttClient.publish('reekoh/data', JSON.stringify({image: new Buffer(image).toString('base64')}));
-                                mqttClient.end();
-                                console.log('sent');
-                            });
+                            mqttClient.publish('reekoh/data', JSON.stringify({image: new Buffer(image).toString('base64')}));
+                            console.log('sent');
                             motion = cp.spawn('motion');
                             setTimeout(function(){socket.emit('refresh');}, 800);
                         });
@@ -53,4 +49,5 @@ io.on('connection', function(socket){
 http.listen(3000, function() {
     console.log('listening on *:3000');
     motion = cp.spawn('motion');
+    mqttClient = mqtt.connect('mqtt://iotexpo.reekoh.com:19001', {clientId: 'raspi1'});
 });
