@@ -1,5 +1,5 @@
 {
-  "name": "IOT Expo POC",
+  "name": "iot-expo-poc",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,7 +12,9 @@
     "url": "https://github.com/Reekoh/iot-expo-poc"
   },
   "dependencies": {
+    "camelittle": "^1.0.0",
     "express": "^4.13.4",
+    "mqtt": "^1.7.0",
     "socket.io": "^1.4.5",
     "tree-kill": "^1.0.0"
   },
