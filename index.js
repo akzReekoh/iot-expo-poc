@@ -8,7 +8,8 @@ var express = require('express'),
     path = require('path'),
     kill = require('tree-kill'),
     cp = require('child_process'),
-    motion,
+    mqtt = require('mqtt'),
+    motion, mqttClient,
     Camelittle = require('camelittle'),
     clInstance = new Camelittle({
         resolution: '640x480',
@@ -25,12 +26,26 @@ var sockets = {};
 io.on('connection', function(socket){
     socket.on('capture-image', function(){
         kill(motion.pid, 'SIGKILL', function(err){
-            clInstance.grab(function(err, image){
-                fs.writeFile('./stream/image.jpg', image, 'binary', function(){
-                    motion = cp.spawn('motion');
-                    setTimeout(function(){socket.emit('refresh');}, 800);
+            if(!err){
+                clInstance.grab(function(err, image){
+                    if(!err){
+                        fs.writeFile('./stream/image.jpg', image, 'binary', function(){
+                            mqttClient = mqtt.connect('mqtt://iotexpo.reekoh.com:19001', {clientId: 'raspi1'});
+                            mqttClient.on('connect', function(){
+                                mqttClient.publish('reekoh/data', JSON.stringify({image: new Buffer(image).toString('base64')}));
+                                mqttClient.end();
+                                console.log('sent');
+                            });
+                            motion = cp.spawn('motion');
+                            setTimeout(function(){socket.emit('refresh');}, 800);
+                        });
+                    }
+                    else
+                        console.error(err);
                 });
-            });
+            }
+            else
+                console.error(err);
         });
     });
 });
