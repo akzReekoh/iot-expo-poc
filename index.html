@@ -5,36 +5,101 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Reekoh POC</title>
-    <!-- Bootstrap CSS -->
+
+    <!-- CSS -->
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: #eee;
+            z-index: 1;
+            opacity: .5;
+            filter: alpha(opacity=50); /* For IE8 and earlier */
+        }
+
+        .header .col-md-4 {
+            text-align: center;
+            margin: 23px 0 0 0;
+        }
+
+        .header img {
+            width: 150px;
+        }
+
+        #liveStream {
+            width: 100%;
+            height: 480px;
+        }
+
+        .container-fluid {
+            margin-left: -15px;
+            margin-right: -15px;
+        }
+
+        .button {
+            position: absolute;
+            z-index: 1;
+            margin-left: auto;
+            margin-right: auto;
+            left: 50%;
+            right: 0;
+            bottom: 20px;
+            margin-left: -56.5px;
+        }
+
+        .button button {
+            padding: 44px 8px;
+            border-radius: 50%;
+            opacity: .5;
+            filter: alpha(opacity=50); /* For IE8 and earlier */
+        }
+    </style>
+
+    <!-- JAVASCRIPT -->
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script>
         var socket = io();
 
         socket.on('refresh', function(){
             console.log('refresh');
             $('#liveStream').remove();
-            $('#liveStreamDiv').append('<embed width="640px" height="480px" id="liveStream" src="http://localhost:8081">');
+            $('#liveStreamDiv').append('<embed id="liveStream" src="http://localhost:8081">');
         });
 
         function captureImage(){
             socket.emit('capture-image');
         }
     </script>
-    <!-- Bootstrap JavaScript -->
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 </head>
-<body class="container" style="text-align:center">
-<h1 class="text-center">Reekoh POC
-    <small>Powered by PI</small>
-</h1>
-<hr>
-<div class="row">
-    <button type="button" onclick="captureImage()" class="btn btn-info start">Capture Image</button></br></br>
-    <div id="liveStreamDiv">
-        <embed width="640px" height="480px" id="liveStream" src="http://localhost:8081">
+<body>
+    <div class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4"><img src="img/microsoft.png"/></div>
+                <div class="col-md-4"><img src="img/reekoh.png"/></div>
+                <div class="col-md-4"><img src="img/azure.png"/></div>
+            </div>
+        </div>
     </div>
-</div>
+    <div class="embed">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="liveStreamDiv">
+                        <embed id="liveStream" src="http://localhost:8081">
+                        <div class="button">
+                            <button type="button" onclick="captureImage()" class="btn btn-info start">Capture Image</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
