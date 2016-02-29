@@ -9,7 +9,7 @@ var express = require('express'),
     kill = require('tree-kill'),
     cp = require('child_process'),
     mqtt = require('mqtt'),
-    motion, mqttClient,
+    motion, mqttClient, currentSocket,
     Camelittle = require('camelittle'),
     clInstance = new Camelittle({
         resolution: '640x480',
@@ -22,41 +22,67 @@ app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
-var sockets = {};
-io.on('connection', function(socket){
-    socket.on('capture-image', function(){
-        kill(motion.pid, 'SIGKILL', function(err){
-            if(!err){
-                clInstance.grab(function(err, image){
-                    if(!err){
-                        fs.writeFile('./stream/image.jpg', image, 'binary', function(){
-                            fs.readFile('./stream/image.jpg', function(err, data) {
-                                if(err) {
-                                    console.error(err);
-                                } else {
-                                    var image = new Buffer(data).toString('base64');
-                                    mqttClient = mqtt.connect('mqtt://iotexpo.reekoh.com:19001', {clientId: 'raspi1'});
-                                    mqttClient.publish('reekoh/data', JSON.stringify({image: image}), function(){
-                                        mqttClient.end();
-                                        console.log('sent');
-                                        motion = cp.spawn('motion');
-                                        setTimeout(function(){socket.emit('refresh');}, 900);
-                                    });
-                                }
-                            });
+function sendImage() {
+    kill(motion.pid, 'SIGKILL', function(err) {
+        if (!err) {
+            clInstance.grab(function(err, image) {
+                if (!err) {
+                    fs.writeFile('./stream/image.jpg', image, 'binary', function() {
+                        fs.readFile('./stream/image.jpg', function(err, data) {
+                            if (err) {
+                                console.error(err);
+                            } else {
+                                var image = new Buffer(data).toString('base64');
+
+                                mqttConnect();
+
+                                mqttClient.publish('reekoh/data', JSON.stringify({
+                                    image: image
+                                }), function() {
+                                    console.log('sent');
+                                    motion = cp.spawn('motion');
+                                    setTimeout(function() {
+                                        currentSocket.emit('refresh');
+                                    }, 900);
+                                });
+                            }
                         });
-                    }
-                    else
-                        console.error(err);
-                });
-            }
-            else
-                console.error(err);
-        });
+                    });
+                } else
+                    console.error(err);
+            });
+        } else
+            console.error(err);
+    });
+}
+
+function mqttConnect(){
+    mqttClient = mqtt.connect('mqtt://iotexpo.reekoh.com:19001', {
+        clientId: 'raspi1',
+        keepalive: 64800
+    });
+
+    mqttClient.subscribe('raspi1');
+
+    mqttClient.on('message', function(topic, payload) {
+        if (payload.toString() === 'capture-image') {
+            mqttClient.end();
+            sendImage();
+        }
+    });
+}
+
+io.on('connection', function(socket) {
+    currentSocket = socket;
+    socket.on('capture-image', function() {
+        mqttClient.end();
+        sendImage();
     });
 });
 
 http.listen(3000, function() {
     console.log('listening on *:3000');
     motion = cp.spawn('motion');
+
+    mqttConnect();
 });
