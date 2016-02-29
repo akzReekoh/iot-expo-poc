@@ -36,12 +36,6 @@ function sendImage() {
 
                                 mqttConnect();
 
-                                mqttClient.on('message', function(topic, payload) {
-                                    if (payload.toString() === 'capture-image') {
-                                        mqttClient.end();
-                                        sendImage();
-                                    }
-                                });
                                 mqttClient.publish('reekoh/data', JSON.stringify({
                                     image: image
                                 }), function() {
