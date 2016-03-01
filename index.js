@@ -66,6 +66,7 @@ function mqttConnect(){
 
     mqttClient.on('message', function(topic, payload) {
         if (payload.toString() === 'capture-image') {
+            currentSocket.emit('commandReceived');
             mqttClient.end();
             sendImage();
         }

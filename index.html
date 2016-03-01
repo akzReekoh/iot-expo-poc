@@ -58,12 +58,21 @@
 
         socket.on('refresh', function(){
             console.log('refresh');
-            $('#liveStream').remove();
             $('#liveStreamDiv').append('<embed id="liveStream" src="http://localhost:8081">');
+        });
+
+        socket.on('commandReceived', function(){
+            takingImage();
         });
 
         function captureImage(){
             socket.emit('capture-image');
+            takingImage();
+        }
+
+        function takingImage(){
+            $('#liveStream').remove();
+            $('#liveStreamDiv').append('<img src="img/loader.gif" height="64" width="64">');
         }
     </script>
 </head>
