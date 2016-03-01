@@ -54,6 +54,7 @@
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"></script>
     <script>
         var socket = io();
 
@@ -75,7 +76,9 @@
 
         function takingImage(){
             $('#liveStreamDiv').css({opacity: '0.5'});
-            $('#liveStreamDiv').append('<img id="imgHolder" style="position: absolute;left: 50%;top: 50%;margin-left: -32px;" src="img/loader.gif" height="64" width="64">');
+            //$('#liveStreamDiv').append('<img id="imgHolder" style="background: transparent; position: absolute;left: 50%;top: 50%;margin-left: -32px;" src="img/loader.gif" height="64" width="64">');
+            $('#liveStreamDiv').append('<i class="fa fa-spinner fa-spin fa-4x" style="position: absolute;left: 50%;top: 50%;margin-left: -32px;"></i>');
+
         }
     </script>
 </head>
