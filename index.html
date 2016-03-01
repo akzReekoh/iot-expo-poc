@@ -7,7 +7,8 @@
     <title>Reekoh POC</title>
 
     <!-- CSS -->
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"
+          rel="stylesheet">
     <style>
         .header {
             position: absolute;
@@ -44,9 +45,9 @@
             margin-left: -30px;
         }
 
-	.button img {
-	    width: 60px;
-	}
+        .button img {
+            width: 60px;
+        }
     </style>
 
     <!-- JAVASCRIPT -->
@@ -58,7 +59,9 @@
 
         socket.on('refresh', function(){
             console.log('refresh');
-            $('#liveStreamDiv').append('<embed id="liveStream" src="http://localhost:8081">');
+            $('#liveStream').remove();
+            $('#liveStreamDiv').append('<embed id="liveStream"src="http://localhost:8081">');
+            $('#imgHolder').remove();
         });
 
         socket.on('commandReceived', function(){
@@ -71,28 +74,28 @@
         }
 
         function takingImage(){
-            $('#liveStream').remove();
-            $('#liveStreamDiv').append('<img src="img/loader.gif" height="64" width="64">');
+            $('#liveStreamDiv').css({opacity: '0.5'});
+            $('#liveStreamDiv').append('<img id="imgHolder" style="position: absolute;left: 50%;top: 50%;margin-left: -32px;" src="img/loader.gif" height="64" width="64">');
         }
     </script>
 </head>
 <body>
-    <div class="header">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-xs-4 col-sm-4"><img src="img/microsoft.png"/></div>
-                <div class="col-xs-4 col-sm-4"><img src="img/reekoh.png"/></div>
-                <div class="col-xs-4 col-sm-4"><img src="img/azure.png"/></div>
-            </div>
+<div class="header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-4 col-sm-4"><img src="img/microsoft.png"/></div>
+            <div class="col-xs-4 col-sm-4"><img src="img/reekoh.png"/></div>
+            <div class="col-xs-4 col-sm-4"><img src="img/azure.png"/></div>
         </div>
     </div>
-    <div class="embed">
-        <div id="liveStreamDiv">
-            <embed id="liveStream" src="http://localhost:8081">
+</div>
+<div class="embed">
+    <div id="liveStreamDiv">
+        <embed id="liveStream" src="http://localhost:8081">
             <div class="button">
-                <a href="javascript:void(0)" onclick="captureImage()"><img src="/img/shutter.png" alt="captureIcon"/></a>
+                <a href="javascript:void(0)"onclick="captureImage()"><img src="/img/shutter.png" alt="captureIcon"/></a>
             </div>
-        </div>
     </div>
+</div>
 </body>
 </html>

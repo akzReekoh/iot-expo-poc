@@ -28,6 +28,9 @@ function sendImage() {
             clInstance.grab(function(err, image) {
                 if (!err) {
                     fs.writeFile('./stream/image.jpg', image, 'binary', function() {
+                        motion = cp.spawn('motion');
+                        currentSocket.emit('refresh');
+
                         fs.readFile('./stream/image.jpg', function(err, data) {
                             if (err) {
                                 console.error(err);
@@ -40,10 +43,6 @@ function sendImage() {
                                     image: image
                                 }), function() {
                                     console.log('sent');
-                                    motion = cp.spawn('motion');
-                                    setTimeout(function() {
-                                        currentSocket.emit('refresh');
-                                    }, 900);
                                 });
                             }
                         });
