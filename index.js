@@ -70,6 +70,7 @@ function mqttConnect(){
             sendImage();
         }
     });
+    console.log('connected to mqtt');
 }
 
 io.on('connection', function(socket) {
